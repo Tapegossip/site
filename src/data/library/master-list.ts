@@ -1,4 +1,3 @@
-
 import { LibraryItem } from './types';
 
 /**
@@ -18,7 +17,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Explores how human understanding has evolved through an interplay of theories and criticism, leading to an unbounded growth of knowledge."
   },
   {
-    id: '6',
+    id: '2',
     title: "Meditations",
     author: "Marcus Aurelius",
     publishedYear: 180,
@@ -27,7 +26,7 @@ export const masterBookList: LibraryItem[] = [
     type: "book"
   },
   {
-    id: '9',
+    id: '3',
     title: "Inadequate Equilibria",
     author: "Eliezer Yudkowsky",
     publishedYear: 2017,
@@ -36,7 +35,7 @@ export const masterBookList: LibraryItem[] = [
     type: "book"
   },
   {
-    id: '10',
+    id: '4',
     title: "The Structure of Scientific Revolutions",
     author: "Thomas S. Kuhn",
     publishedYear: 1962,
@@ -45,7 +44,7 @@ export const masterBookList: LibraryItem[] = [
     type: "book"
   },
   {
-    id: '64',
+    id: '5',
     title: "12 Rules for Life",
     author: "Jordan B. Peterson",
     publishedYear: 2018,
@@ -55,7 +54,7 @@ export const masterBookList: LibraryItem[] = [
     description: "A guide for living a more meaningful life with rules based on ancient traditions, psychology, and stories."
   },
   {
-    id: '180',
+    id: '6',
     title: "Essays in Existentialism",
     author: "Jean-Paul Sartre",
     publishedYear: 1965,
@@ -65,7 +64,7 @@ export const masterBookList: LibraryItem[] = [
     description: "A collection of essays exploring Sartre's existentialist philosophy."
   },
   {
-    id: '181',
+    id: '7',
     title: "Plato and a Platypus Walk into a Bar",
     author: "Thomas Cathcart, Daniel Klein",
     publishedYear: 2007,
@@ -75,7 +74,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Understanding philosophy through jokes."
   },
   {
-    id: '182',
+    id: '8',
     title: "Discourses on Livy",
     author: "Niccolo Machiavelli",
     publishedYear: 1531,
@@ -87,7 +86,7 @@ export const masterBookList: LibraryItem[] = [
   
   // Finance Books
   {
-    id: '37',
+    id: '9',
     title: "The ANXIOUS Investor",
     author: "Scott Nations",
     publishedYear: 2022,
@@ -97,7 +96,7 @@ export const masterBookList: LibraryItem[] = [
     description: "How to harness your anxiety for better investing decisions."
   },
   {
-    id: '38',
+    id: '10',
     title: "The End of Accounting",
     author: "Baruch Lev, Feng Gu",
     publishedYear: 2016,
@@ -107,7 +106,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Argues that traditional financial statements have lost their relevance for investors and managers."
   },
   {
-    id: '52',
+    id: '11',
     title: "Heard on The Street",
     author: "Timothy Falcon Crack",
     publishedYear: 2014,
@@ -117,7 +116,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Quantitative questions from Wall Street job interviews with detailed solutions."
   },
   {
-    id: '191',
+    id: '12',
     title: "Fooling Some of the People All Of The Time",
     author: "David Einhorn",
     publishedYear: 2011,
@@ -129,7 +128,7 @@ export const masterBookList: LibraryItem[] = [
   
   // Science Books
   {
-    id: '35',
+    id: '13',
     title: "The Evolution of Biological Information",
     author: "Christoph Adami",
     publishedYear: 2023,
@@ -141,7 +140,7 @@ export const masterBookList: LibraryItem[] = [
   
   // Technology Books
   {
-    id: '8',
+    id: '14',
     title: "Status as a Service (StaaS)",
     author: "Eugene Wei",
     publishedYear: 2019,
@@ -150,7 +149,7 @@ export const masterBookList: LibraryItem[] = [
     type: "article"
   },
   {
-    id: '26',
+    id: '15',
     title: "AI Superpowers",
     author: "Kai-Fu Lee",
     publishedYear: 2018,
@@ -160,7 +159,7 @@ export const masterBookList: LibraryItem[] = [
     description: "A perspective on the future of AI and the technological competition between China and the United States."
   },
   {
-    id: '27',
+    id: '16',
     title: "AI 2041",
     author: "Kai-Fu Lee",
     publishedYear: 2021,
@@ -170,7 +169,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Ten stories set in 2041 exploring how AI might transform our world over the next 20 years."
   },
   {
-    id: '28',
+    id: '17',
     title: "Artificial Intelligence: A Guide for Thinking Humans",
     author: "Melanie Mitchell",
     publishedYear: 2019,
@@ -180,7 +179,7 @@ export const masterBookList: LibraryItem[] = [
     description: "A balanced and accessible overview of AI technologies and their implications."
   },
   {
-    id: '45',
+    id: '18',
     title: "The Lean Startup",
     author: "Eric Ries",
     publishedYear: 2011,
@@ -192,7 +191,7 @@ export const masterBookList: LibraryItem[] = [
   
   // Business Books
   {
-    id: '29',
+    id: '19',
     title: "The Singapore Story",
     author: "Lee Kuan Yew (LKY)",
     publishedYear: 1998,
@@ -202,7 +201,7 @@ export const masterBookList: LibraryItem[] = [
     description: "The first volume of Lee Kuan Yew's memoirs, covering Singapore's path to independence."
   },
   {
-    id: '30',
+    id: '20',
     title: "From Third World to First: The Singapore Story: 1965-2000",
     author: "Lee Kuan Yew (LKY)",
     publishedYear: 2000,
@@ -212,7 +211,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Lee Kuan Yew's account of how Singapore developed from a third world country into a modern economic powerhouse."
   },
   {
-    id: '47',
+    id: '21',
     title: "COVID-19: The Great Reset",
     author: "Klaus Schwab, Thierry Malleret",
     publishedYear: 2023,
@@ -222,7 +221,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Examines the far-reaching implications of the COVID-19 pandemic on society, economics, and global politics."
   },
   {
-    id: '48',
+    id: '22',
     title: "The Goal: A Process of Ongoing Improvement",
     author: "Eliyahu M. Goldratt, Jeff Cox",
     publishedYear: 1984,
@@ -232,7 +231,7 @@ export const masterBookList: LibraryItem[] = [
     description: "A business novel that introduces the Theory of Constraints for improving process efficiency."
   },
   {
-    id: '50',
+    id: '23',
     title: "Hidden Champions",
     author: "Hermann Simon",
     publishedYear: 2009,
@@ -242,7 +241,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Analysis of little-known world market leaders and their successful strategies."
   },
   {
-    id: '58',
+    id: '24',
     title: "Principles",
     author: "Ray Dalio",
     publishedYear: 2017,
@@ -251,7 +250,7 @@ export const masterBookList: LibraryItem[] = [
     type: "book"
   },
   {
-    id: '61',
+    id: '25',
     title: "Good to Great",
     author: "Jim Collins",
     publishedYear: 2001,
@@ -262,7 +261,7 @@ export const masterBookList: LibraryItem[] = [
   
   // Self-Improvement Books
   {
-    id: '21',
+    id: '26',
     title: "Thinking, Fast and Slow",
     author: "Daniel Kahneman",
     publishedYear: 2011,
@@ -272,7 +271,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Nobel Prize winner Daniel Kahneman's groundbreaking work on the two systems that drive the way we think."
   },
   {
-    id: '22',
+    id: '27',
     title: "Noise: A Flaw in Human Judgment",
     author: "Daniel Kahneman, Olivier Sibony, Cass R. Sunstein",
     publishedYear: 2021,
@@ -282,7 +281,7 @@ export const masterBookList: LibraryItem[] = [
     description: "An exploration of how noise (random variability) affects our decision-making processes."
   },
   {
-    id: '53',
+    id: '28',
     title: "Thinking in Bets",
     author: "Annie Duke",
     publishedYear: 2018,
@@ -292,7 +291,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Making smarter decisions when you don't have all the facts."
   },
   {
-    id: '54',
+    id: '29',
     title: "Show Your Work",
     author: "Austin Kleon",
     publishedYear: 2014,
@@ -301,7 +300,7 @@ export const masterBookList: LibraryItem[] = [
     type: "book"
   },
   {
-    id: '55',
+    id: '30',
     title: "How To Win Friends and Influence People",
     author: "Dale Carnegie",
     publishedYear: 1936,
@@ -310,7 +309,7 @@ export const masterBookList: LibraryItem[] = [
     type: "book"
   },
   {
-    id: '56',
+    id: '31',
     title: "Atomic Habits",
     author: "James Clear",
     publishedYear: 2018,
@@ -319,7 +318,7 @@ export const masterBookList: LibraryItem[] = [
     type: "book"
   },
   {
-    id: '57',
+    id: '32',
     title: "The One Thing",
     author: "Gary Keller",
     publishedYear: 2013,
@@ -328,7 +327,7 @@ export const masterBookList: LibraryItem[] = [
     type: "book"
   },
   {
-    id: '63',
+    id: '33',
     title: "The Way of the Superior Man",
     author: "David Deida",
     publishedYear: 2004,
@@ -339,7 +338,7 @@ export const masterBookList: LibraryItem[] = [
   
   // Fiction Books
   {
-    id: '46',
+    id: '34',
     title: "The Lord of the Rings",
     author: "J.R.R. Tolkien",
     publishedYear: 1954,
@@ -352,7 +351,7 @@ export const masterBookList: LibraryItem[] = [
   // Psychology Books
   // (Note: Already included Thinking, Fast and Slow and Noise above in self-improvement)
   {
-    id: '120',
+    id: '35',
     title: "How to Know a Person",
     author: "David Brooks",
     publishedYear: 2023,
@@ -362,7 +361,7 @@ export const masterBookList: LibraryItem[] = [
     description: "The art of seeing others deeply and being deeply seen."
   },
   {
-    id: '121',
+    id: '36',
     title: "The Road to Character",
     author: "David Brooks",
     publishedYear: 2015,
@@ -372,7 +371,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Explores the path to a deeper and more meaningful life through moral virtues."
   },
   {
-    id: '122',
+    id: '37',
     title: "Awe: The New Science of Everyday Wonder",
     author: "Dacher Keltner",
     publishedYear: 2023,
@@ -382,7 +381,7 @@ export const masterBookList: LibraryItem[] = [
     description: "How the science of awe can transform your life."
   },
   {
-    id: '123',
+    id: '38',
     title: "How to Change Your Mind",
     author: "Michael Pollan",
     publishedYear: 2018,
@@ -394,7 +393,7 @@ export const masterBookList: LibraryItem[] = [
   
   // Physics Books
   {
-    id: '36',
+    id: '39',
     title: "Black Holes & Time Warps",
     author: "Kip Stephen Thorne",
     publishedYear: 1994,
@@ -404,7 +403,7 @@ export const masterBookList: LibraryItem[] = [
     description: "An accessible explanation of Einstein's relativity theory and black holes."
   },
   {
-    id: '130',
+    id: '40',
     title: "The Road to Reality",
     author: "Roger Penrose",
     publishedYear: 2004,
@@ -414,7 +413,7 @@ export const masterBookList: LibraryItem[] = [
     description: "A complete guide to the laws of the universe."
   },
   {
-    id: '131',
+    id: '41',
     title: "Methods of Theoretical Physics",
     author: "Philip M. Morse, Herman Feshbach",
     publishedYear: 1953,
@@ -424,7 +423,7 @@ export const masterBookList: LibraryItem[] = [
     description: "A classic and comprehensive reference on mathematical methods in theoretical physics."
   },
   {
-    id: '132',
+    id: '42',
     title: "Mathematical Methods for Physicists",
     author: "Arfken, Weber, Harris",
     publishedYear: 2012,
@@ -434,7 +433,7 @@ export const masterBookList: LibraryItem[] = [
     description: "A comprehensive guide to mathematical methods used in physics."
   },
   {
-    id: '133',
+    id: '43',
     title: "White Holes: Inside the Horizon",
     author: "Carlo Rovelli",
     publishedYear: 2023,
@@ -446,7 +445,7 @@ export const masterBookList: LibraryItem[] = [
   
   // Astronomy Books
   {
-    id: '23',
+    id: '44',
     title: "Cosmos",
     author: "Carl Sagan",
     publishedYear: 1980,
@@ -456,7 +455,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Carl Sagan's classic exploration of the universe and humanity's place within it."
   },
   {
-    id: '24',
+    id: '45',
     title: "Pale Blue Dot: A Vision of Human Future in Space",
     author: "Carl Sagan",
     publishedYear: 1994,
@@ -466,7 +465,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Inspired by the famous 'pale blue dot' photograph, Sagan reflects on humanity's place in the cosmos."
   },
   {
-    id: '25',
+    id: '46',
     title: "Contact",
     author: "Carl Sagan",
     publishedYear: 1985,
@@ -478,7 +477,7 @@ export const masterBookList: LibraryItem[] = [
   
   // Geography Books
   {
-    id: '140',
+    id: '47',
     title: "Prisoners of Geography",
     author: "Tim Marshall",
     publishedYear: 2015,
@@ -488,7 +487,7 @@ export const masterBookList: LibraryItem[] = [
     description: "Ten maps that explain everything about the world."
   },
   {
-    id: '141',
+    id: '48',
     title: "The Revenge of Geography",
     author: "Robert D. Kaplan",
     publishedYear: 2012,
@@ -498,7 +497,7 @@ export const masterBookList: LibraryItem[] = [
     description: "What the map tells us about coming conflicts and the battle against fate."
   },
   {
-    id: '142',
+    id: '49',
     title: "Atlas of the World",
     author: "National Geographic",
     publishedYear: 2019,
@@ -510,7 +509,7 @@ export const masterBookList: LibraryItem[] = [
   
   // Politics Books
   {
-    id: '150',
+    id: '50',
     title: "The Grand Chessboard",
     author: "Zbigniew Brzezinski",
     publishedYear: 1997,
@@ -520,7 +519,7 @@ export const masterBookList: LibraryItem[] = [
     description: "American primacy and its geostrategic imperatives."
   },
   {
-    id: '151',
+    id: '51',
     title: "Nasty Politics",
     author: "Thomas Zeitzoff",
     publishedYear: 2023,
@@ -530,7 +529,7 @@ export const masterBookList: LibraryItem[] = [
     description: "The logic of insults, threats, and incitement in political discourse."
   },
   {
-    id: '152',
+    id: '52',
     title: "Quest for Status: Chinese and Russian Foreign Policy",
     author: "Alexei Shevchenko, Deborah Welch Larson",
     publishedYear: 2019,
@@ -542,7 +541,7 @@ export const masterBookList: LibraryItem[] = [
   
   // Engineering Books
   {
-    id: '160',
+    id: '53',
     title: "507 Mechanical Movements",
     author: "Henry T. Brown",
     publishedYear: 1868,
@@ -552,7 +551,7 @@ export const masterBookList: LibraryItem[] = [
     description: "A classic compendium of mechanical movements, devices, and appliances."
   },
   {
-    id: '161',
+    id: '54',
     title: "Open Circuits: The Inner Beauty of Electronic Components",
     author: "Eric Schlaepfer, Windell H. Oskay",
     publishedYear: 2022,
@@ -564,7 +563,7 @@ export const masterBookList: LibraryItem[] = [
   
   // Sociology Books
   {
-    id: '170',
+    id: '55',
     title: "Sociology: Themes and Perspectives",
     author: "Michael Haralambos & Martin Holborn",
     publishedYear: 1980,
@@ -579,7 +578,7 @@ export const masterBookList: LibraryItem[] = [
   
   // History Books (specific ones not already included above)
   {
-    id: '110',
+    id: '56',
     title: "The Lessons of History",
     author: "Will and Ariel Durant",
     publishedYear: 1968,
@@ -589,7 +588,7 @@ export const masterBookList: LibraryItem[] = [
     description: "A concise survey of the culture and civilization of humankind."
   },
   {
-    id: '111',
+    id: '57',
     title: "Bloodlands: Europe between Hitler and Stalin",
     author: "Timothy Snyder",
     publishedYear: 2010,
@@ -599,7 +598,7 @@ export const masterBookList: LibraryItem[] = [
     description: "A history of Nazi and Soviet mass killing on the lands between Berlin and Moscow."
   },
   {
-    id: '112',
+    id: '58',
     title: "The Horse, The Wheel, and Language",
     author: "David W. Anthony",
     publishedYear: 2007,
@@ -609,7 +608,7 @@ export const masterBookList: LibraryItem[] = [
     description: "How Bronze-Age riders from the Eurasian steppes shaped the modern world."
   },
   {
-    id: '113',
+    id: '59',
     title: "The Decline and Fall of the Roman Empire",
     author: "Edward Gibbon",
     publishedYear: 1776,
@@ -619,7 +618,7 @@ export const masterBookList: LibraryItem[] = [
     description: "A monumental work covering the history of the Roman Empire from the end of the second century to the fall of Constantinople."
   },
   {
-    id: '114',
+    id: '60',
     title: "India's China War",
     author: "Neville Maxwell",
     publishedYear: 1970,
