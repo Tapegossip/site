@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -43,21 +42,15 @@ const Home = () => {
           >
             <div>
               <p className="mb-4">
-                I'm a software engineer and writer exploring the intersections of technology, society, and human
-                coordination. My work focuses on understanding how technological primitives shape our civilization
-                and how we can better design systems for human flourishing.
+                I'm a trader and researcher exploring the intersections of markets, risk, and human behavior. My work focuses on understanding how financial systems evolve, the psychological forces driving market dynamics, and how we can better design strategies for long-term success.
               </p>
               <CollapsibleContent>
                 <div className="mt-4 space-y-4">
                   <p>
-                    Currently, I'm researching distributed systems and their parallels in social structures. When not coding
-                    or writing, I'm usually reading about complex systems, organizational design, or diving into historical
-                    patterns of technological evolution.
+                    Currently, I'm studying market cycles, liquidity flows, and the impact of macroeconomic trends on asset pricing. When not analyzing charts or refining strategies, I'm usually reading about economic history, complex systems, or the behavioral patterns that shape financial decision-making.
                   </p>
                   <p>
-                    My background spans across various disciplines, giving me a unique perspective 
-                    on contemporary issues. I believe in the power of rational discourse and continuous 
-                    learning to improve both individual lives and society at large.
+                    My background spans multiple disciplines, giving me a unique perspective on market structure and risk. I believe in the power of rigorous analysis, adaptive thinking, and continuous learning to navigate uncertainty and build a sustainable trading edge.
                   </p>
                 </div>
               </CollapsibleContent>

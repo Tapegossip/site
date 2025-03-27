@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { Twitter, Mail } from 'lucide-react';
 import { useAnimationOnScroll } from '../hooks/useAnimationOnScroll';
@@ -20,9 +19,7 @@ const About = () => {
         className="page-section"
       >
         <p className="text-lg mb-6">
-          I'm a software engineer and writer exploring the intersections of technology, society, and human
-          coordination. My work focuses on understanding how technological primitives shape our civilization
-          and how we can better design systems for human flourishing.
+          I'm a trader and researcher exploring the intersections of markets, risk, and human behavior. My work focuses on understanding how financial systems evolve, the psychological forces driving market dynamics, and how we can better design strategies for long-term success.
         </p>
       </motion.div>
       
@@ -36,9 +33,7 @@ const About = () => {
         className="page-section"
       >
         <p className="text-lg mb-6">
-          Currently, I'm researching distributed systems and their parallels in social structures. When not coding
-          or writing, I'm usually reading about complex systems, organizational design, or diving into historical
-          patterns of technological evolution.
+          Currently, I'm studying market cycles, liquidity flows, and the impact of macroeconomic trends on asset pricing. When not analyzing charts or refining strategies, I'm usually reading about economic history, complex systems, or the behavioral patterns that shape financial decision-making.
         </p>
       </motion.div>
       
