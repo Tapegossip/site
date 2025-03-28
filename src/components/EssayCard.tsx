@@ -22,7 +22,10 @@ const EssayCard = ({ essay, index }: EssayCardProps) => {
         to={isComingSoon ? '#' : `/essay/${essay.slug}`}
         className="block transition-all duration-300 hover:opacity-80"
       >
-        <h2 className="text-2xl font-heading font-bold mb-2">{essay.title}</h2>
+        <h2 className="text-2xl font-heading font-bold mb-2">{essay.mainTitle}</h2>
+        {essay.subtitle && (
+          <p className="text-lg text-muted-foreground mb-2">{essay.subtitle}</p>
+        )}
         <time className="text-sm text-muted-foreground block mb-3">
           {new Date(essay.date).toLocaleDateString('en-US', {
             year: 'numeric',

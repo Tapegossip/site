@@ -53,7 +53,10 @@ const EssayDetail = () => {
         className="max-w-3xl mx-auto"
       >
         <header className="mb-12">
-          <h1 className="text-3xl md:text-4xl font-heading font-bold mb-4">{essay.title}</h1>
+          <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">{essay.mainTitle}</h1>
+          {essay.subtitle && (
+            <p className="text-xl text-muted-foreground mb-4">{essay.subtitle}</p>
+          )}
           <time className="text-sm text-muted-foreground block">
             {new Date(essay.date).toLocaleDateString('en-US', {
               year: 'numeric',
