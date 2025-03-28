@@ -41,9 +41,7 @@ export const essays: Essay[] = [
 
       <p>So communities developed currencies - shells, beads, precious metals - as an intermediary to facilitate trade. Now Anna can sell apples for coins, and use those coins to buy anything she needs later. The currency represents stored value.</p>
 
-      <div class="my-8">
-        <img src="https://images.unsplash.com/photo-1561414927-6d86591d0c4f" alt="Ancient coins and currency" class="rounded-lg w-full object-cover h-80" />
-      </div>
+
 
       <p>As communities grew into nations with borders, currencies became more formalized. But the fundamental dynamic remains: currencies facilitate the exchange of real goods and services.</p>
 
@@ -79,9 +77,7 @@ export const essays: Essay[] = [
 
       <h2 class="text-xl font-bold mt-8 mb-4">The Great Balancing Act: Why Repo Rates Matter</h2>
 
-      <div class="my-8">
-        <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3" alt="Central Bank Building" class="rounded-lg w-full object-cover h-80" />
-      </div>
+
 
       <p>Central banks evolved to manage these complex flows. Their primary tool? Interest rates. The repo rate (the rate at which central banks lend to commercial banks) is their main control mechanism.</p>
 
@@ -117,9 +113,7 @@ export const essays: Essay[] = [
         <li>Finally, regular folks like us get our turn - through wages, consumer credit, or perhaps a home loan.</li>
       </ol>
 
-      <div class="my-8">
-        <img src="https://images.unsplash.com/photo-1579170053380-58a0ed8d75e2" alt="Financial district skyscrapers" class="rounded-lg w-full object-cover h-80" />
-      </div>
+
 
       <p>This hierarchical distribution creates interesting dynamics. By the time money reaches ordinary people, asset prices have often already been bid up by those who got access earlier. This is why timing matters so much in financial cycles.</p>
 
@@ -178,9 +172,7 @@ export const essays: Essay[] = [
 
       <p>Think of it this way: If I have $100 and spend it once a month, that's $1,200 of economic activity per year. But if I spend that same $100 ten times a month, that's $12,000 of economic activity!</p>
 
-      <div class="my-8">
-        <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d" alt="Money exchange hands" class="rounded-lg w-full object-cover h-80" />
-      </div>
+
 
       <p>Japan's decades-long economic stagnation perfectly illustrates what happens when velocity collapses. Despite the Bank of Japan printing enormous amounts of money, people and companies hoarded cash instead of spending it. The result? Persistent deflation and economic malaise.</p>
 
@@ -288,9 +280,7 @@ export const essays: Essay[] = [
 
       <p>Rinse and repeat</p>
 
-      <div class="my-8">
-        <img src="https://images.unsplash.com/photo-1465450752297-6c7e31abb22b" alt="Mountain cycles" class="rounded-lg w-full object-cover h-80" />
-      </div>
+
 
       <p>This is why your parents' financial advice might seem outdated - they're remembering a different part of the cycle! Your dad who says "save every penny" probably lived through high inflation. Your uncle who says "buy real estate with maximum leverage" probably made a killing during the last low-rate period.</p>
 
