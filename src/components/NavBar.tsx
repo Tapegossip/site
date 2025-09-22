@@ -41,7 +41,7 @@ const NavBar = () => {
           <span className="text-xs text-muted-foreground">anon</span>
         </div>
         
-        <nav className="flex items-center space-x-6 md:space-x-8">
+  <nav className="flex items-center space-x-2 md:space-x-8">
           {navItems.map((item) => (
             <AnimatedLink 
               key={item.path} 
