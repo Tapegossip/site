@@ -93,15 +93,6 @@ export const miscellaneousBooks: LibraryItem[] = [
     type: "book"
   },
   {
-    id: '210',
-    title: "The Secret History of Mongols: The origin of chingis khan",
-    author: "Paul Kahn",
-    publishedYear: 1998,
-    link: "https://www.goodreads.com/search?q=The+Secret+History+of+Mongols+Paul+Kahn",
-    tags: ["history", "mongols", "biography"],
-    type: "book"
-  },
-  {
     id: '211',
     title: "The Protocols",
     author: "Illuminati",

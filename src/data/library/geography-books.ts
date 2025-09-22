@@ -13,16 +13,6 @@ export const geographyBooks: LibraryItem[] = [
     description: "Ten maps that explain everything about the world."
   },
   {
-    id: '141',
-    title: "The Revenge of Geography",
-    author: "Robert D. Kaplan",
-    publishedYear: 2012,
-    link: "https://www.goodreads.com/book/show/13330422-the-revenge-of-geography",
-    tags: ["geography", "geopolitics", "international relations", "politics"],
-    type: "book",
-    description: "What the map tells us about coming conflicts and the battle against fate."
-  },
-  {
     id: '142',
     title: "Atlas of the World",
     author: "National Geographic",
