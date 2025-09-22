@@ -1,5 +1,4 @@
-
-import { LibraryItem } from '../types';
+import { LibraryItem } from './types';
 
 export const investingBooks: LibraryItem[] = [
   {
