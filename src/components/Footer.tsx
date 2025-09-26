@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { X, Linkedin, Mail } from 'lucide-react';
+import { X, Mail } from 'lucide-react';
 import ExternalLink from './ExternalLink';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -57,15 +57,6 @@ const Footer = () => {
           >
             <X className="h-5 w-5" />
             <span className="sr-only">X (Twitter)</span>
-          </ExternalLink>
-          
-          <ExternalLink 
-            href="https://linkedin.com/in/aditya8520" 
-            className="hover:text-blue-500 text-muted-foreground"
-            showIcon={false}
-          >
-            <Linkedin className="h-5 w-5" />
-            <span className="sr-only">LinkedIn</span>
           </ExternalLink>
           
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
