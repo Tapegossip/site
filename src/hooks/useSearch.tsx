@@ -1,8 +1,6 @@
 import { useState, useMemo } from 'react';
 import type { LibraryItem, MediaType } from '../data/library';
 
-export type TypeFilter = MediaType | 'all';
-
 const normalize = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 /** True if a and b differ by at most one inserted, deleted, changed, or swapped-adjacent letter. */
@@ -58,38 +56,81 @@ export const createMatcher = (index: Indexed[], query: string) => {
       : entry.words.some(w => withinOneEdit(q, w)));
 };
 
-/** Text search (title, author, category, and the hidden tags), a type tab, and a category filter. */
-export function useSearch(items: LibraryItem[], initialType: TypeFilter = 'all') {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedType, setSelectedType] = useState<TypeFilter>(initialType);
+/** True if every query word starts a word in the title (used to rank title hits first). */
+const titleHit = (item: LibraryItem, query: string) => {
+  const titleWords = normalize(item.title).split(/[^a-z0-9]+/).filter(Boolean);
+  return normalize(query).split(/\s+/).filter(Boolean).every(q => titleWords.some(w => w.startsWith(q)));
+};
+
+/**
+ * Browsing: one type tab at a time (`browseType`).
+ * Searching: results span every type; tapping a tab narrows to it (`narrowType`), tapping again widens.
+ * Clearing the search returns to the browsed tab.
+ */
+export function useSearch(items: LibraryItem[], initialType: MediaType) {
+  const [searchQuery, setQuery] = useState('');
+  const [browseType, setBrowseType] = useState<MediaType>(initialType);
+  const [narrowType, setNarrowType] = useState<MediaType | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const isSearching = searchQuery.trim() !== '';
+  /** The type currently shown; null = all types (only while searching). */
+  const activeType: MediaType | null = isSearching ? narrowType : browseType;
+
+  const setSearchQuery = (q: string) => {
+    if (!isSearching && q.trim() !== '') {
+      setNarrowType(null);           // a new search always starts across everything
+      setSelectedCategories([]);
+    }
+    setQuery(q);
+  };
+
+  const selectTab = (type: MediaType) => {
+    setSelectedCategories([]);
+    if (isSearching) setNarrowType(prev => (prev === type ? null : type));
+    else setBrowseType(type);
+  };
 
   const index = useMemo(() => buildIndex(items), [items]);
 
-  const filteredItems = useMemo(() => {
+  // Items matching the search text, across all types (drives the per-tab counts).
+  const textMatches = useMemo(() => {
     const matches = createMatcher(index, searchQuery);
-    return index
-      .filter(entry =>
-        (selectedType === 'all' || entry.item.type === selectedType) &&
-        (selectedCategories.length === 0 || selectedCategories.includes(entry.item.category)) &&
-        matches(entry)
-      )
-      .map(entry => entry.item);
-  }, [index, searchQuery, selectedType, selectedCategories]);
+    const found = index.filter(matches).map(entry => entry.item);
+    if (searchQuery.trim() === '') return found;
+    // Title hits first, otherwise keep library order (sort is stable).
+    return found
+      .map(item => ({ item, rank: titleHit(item, searchQuery) ? 0 : 1 }))
+      .sort((a, b) => a.rank - b.rank)
+      .map(r => r.item);
+  }, [index, searchQuery]);
+
+  const countsByType = useMemo(() => textMatches.reduce<Partial<Record<MediaType, number>>>((acc, item) => {
+    acc[item.type] = (acc[item.type] ?? 0) + 1;
+    return acc;
+  }, {}), [textMatches]);
+
+  const filteredItems = useMemo(() => textMatches.filter(item =>
+    (activeType === null || item.type === activeType) &&
+    (selectedCategories.length === 0 || selectedCategories.includes(item.category))
+  ), [textMatches, activeType, selectedCategories]);
 
   return {
     searchQuery,
     setSearchQuery,
-    selectedType,
-    setSelectedType,
+    isSearching,
+    browseType,
+    activeType,
+    selectTab,
     selectedCategories,
     filteredItems,
+    countsByType,
     toggleCategory: (c: string) =>
       setSelectedCategories(prev => (prev.includes(c) ? prev.filter(v => v !== c) : [...prev, c])),
     clearSelections: () => setSelectedCategories([]),
     clearFilters: () => {
       setSelectedCategories([]);
-      setSearchQuery('');
+      setQuery('');
     },
   };
 }

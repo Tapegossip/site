@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, X, BookOpen, Filter, Play, FolderOpen } from 'lucide-react';
-import { useSearch, type TypeFilter } from '../hooks/useSearch';
+import { useSearch } from '../hooks/useSearch';
 import { useOwnerMode, driveSearchUrl } from '../hooks/useOwnerMode';
 import { libraryItems, allCategories, mediaTypes, type LibraryItem, type MediaType } from '../data/library';
 import VideoDialog from '../components/VideoDialog';
@@ -36,21 +36,16 @@ import { Checkbox } from '../components/ui/checkbox';
 
 const ITEMS_PER_PAGE = 15;
 
-const typeCounts = libraryItems.reduce<Partial<Record<MediaType, number>>>((acc, item) => {
-  acc[item.type] = (acc[item.type] ?? 0) + 1;
-  return acc;
-}, {});
-const tabs = [
-  { type: 'all' as TypeFilter, label: 'All', count: libraryItems.length },
-  ...mediaTypes.filter(t => typeCounts[t.type]).map(t => ({ ...t, count: typeCounts[t.type]! })),
-];
-const isTypeFilter = (v: string | null): v is TypeFilter => !!v && tabs.some(t => t.type === v);
+// One tab per type that has items; the first (Books) is where browsing starts.
+const tabs = mediaTypes.filter(t => libraryItems.some(item => item.type === t.type));
+const isTabType = (v: string | null): v is MediaType => !!v && tabs.some(t => t.type === v);
 
 const typeLabel: Record<MediaType, string> = {
   book: 'Book', article: 'Article', paper: 'Paper', video: 'Video', podcast: 'Podcast', website: 'Website',
 };
-const countLabel = (type: TypeFilter, n: number) => {
-  const word = type === 'all' ? 'item' : typeLabel[type].toLowerCase();
+/** "12 videos", or "12 results" for a search across every type. */
+const countLabel = (type: MediaType | null, n: number) => {
+  const word = type === null ? 'result' : typeLabel[type].toLowerCase();
   return `${n} ${word}${n === 1 ? '' : 's'}`;
 };
 
@@ -65,35 +60,38 @@ const Library = () => {
   const {
     searchQuery,
     setSearchQuery,
-    selectedType,
-    setSelectedType,
+    isSearching,
+    activeType,
+    selectTab,
     selectedCategories,
     filteredItems,
+    countsByType,
     toggleCategory,
     clearSelections,
     clearFilters
-  } = useSearch(libraryItems, isTypeFilter(urlType) ? urlType : 'all');
+  } = useSearch(libraryItems, isTabType(urlType) ? urlType : tabs[0].type);
 
-  // Keep the tab in the URL so e.g. /#/library?type=video can be bookmarked.
-  const selectType = (type: TypeFilter) => {
-    setSelectedType(type);
-    clearSelections();
-    const next = new URLSearchParams(params);
-    if (type === 'all') next.delete('type'); else next.set('type', type);
-    next.delete('owner');
-    setParams(next, { replace: true });
+  const onTabClick = (type: MediaType) => {
+    // While browsing, keep the tab in the URL so e.g. /#/library?type=video can be bookmarked.
+    if (!isSearching) {
+      const next = new URLSearchParams(params);
+      if (type === tabs[0].type) next.delete('type'); else next.set('type', type);
+      next.delete('owner');
+      setParams(next, { replace: true });
+    }
+    selectTab(type);
   };
 
-  // Category counts follow the selected tab.
+  // Category counts follow what's shown (one type, or everything while searching).
   const categoryCounts = useMemo(() => libraryItems.reduce<Record<string, number>>((acc, item) => {
-    if (selectedType === 'all' || item.type === selectedType) acc[item.category] = (acc[item.category] ?? 0) + 1;
+    if (activeType === null || item.type === activeType) acc[item.category] = (acc[item.category] ?? 0) + 1;
     return acc;
-  }, {}), [selectedType]);
+  }, {}), [activeType]);
   const visibleCategories = allCategories.filter(c => categoryCounts[c]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedType, selectedCategories]);
+  }, [searchQuery, activeType, selectedCategories]);
 
   const goToPage = (page: number) => {
     setCurrentPage(page);
@@ -113,36 +111,14 @@ const Library = () => {
     <div className="page-container">
       <h1 className="page-title">Library</h1>
 
-      {tabs.length > 2 && (
-        <div className="mb-6 -mx-4 px-4 overflow-x-auto scrollbar-none">
-          <div role="tablist" aria-label="Media type" className="flex gap-2 w-max">
-            {tabs.map(tab => (
-              <button
-                key={tab.type}
-                role="tab"
-                aria-selected={selectedType === tab.type}
-                onClick={() => selectType(tab.type)}
-                className={`px-3 py-1.5 rounded-full text-sm border transition-colors whitespace-nowrap ${
-                  selectedType === tab.type
-                    ? 'bg-foreground text-background border-foreground'
-                    : 'border-border text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {tab.label} <span className="opacity-60 tabular-nums">{tab.count}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="mb-8 flex flex-col sm:flex-row gap-4">
+      <div className="mb-4 flex flex-col sm:flex-row gap-4">
         <div className="relative flex-grow">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by title, author, or topic..."
+            placeholder="Search everything: title, author, or topic..."
             aria-label="Search the library"
             className="w-full pl-10 pr-10 py-2 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring text-sm bg-transparent transition-colors [&::-webkit-search-cancel-button]:hidden"
           />
@@ -200,13 +176,41 @@ const Library = () => {
             <div className="mt-8 pb-2">
               <SheetClose asChild>
                 <Button className="w-full">
-                  Show {countLabel(selectedType, filteredItems.length)}
+                  Show {countLabel(activeType, filteredItems.length)}
                 </Button>
               </SheetClose>
             </div>
           </SheetContent>
         </Sheet>
       </div>
+
+      {tabs.length > 1 && (
+        <div className="mb-6 -mx-4 px-4 overflow-x-auto scrollbar-none">
+          <div role="tablist" aria-label="Media type" className="flex gap-2 w-max">
+            {tabs.map(tab => {
+              const selected = activeType === tab.type;
+              const count = isSearching ? (countsByType[tab.type] ?? 0) : null;
+              return (
+                <button
+                  key={tab.type}
+                  role="tab"
+                  aria-selected={selected}
+                  onClick={() => onTabClick(tab.type)}
+                  disabled={count === 0 && !selected}
+                  className={`px-3 py-1.5 rounded-full text-sm border transition-colors whitespace-nowrap disabled:opacity-40 disabled:cursor-default ${
+                    selected
+                      ? 'bg-foreground text-background border-foreground'
+                      : 'border-border text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {tab.label}
+                  {count !== null && <span className="ml-1 opacity-60 tabular-nums">{count}</span>}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {activeChips.length > 0 && (
         <div className="mb-4 flex flex-wrap gap-2 items-center">
@@ -229,7 +233,7 @@ const Library = () => {
 
       <div ref={tableTop} className="mb-4 scroll-mt-24">
         <p className="text-sm text-muted-foreground">
-          {countLabel(selectedType, filteredItems.length)}
+          {countLabel(activeType, filteredItems.length)}
         </p>
       </div>
 
@@ -267,7 +271,7 @@ const Library = () => {
                     )}
                     <div className="mt-1 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
                       <span>
-                        {item.type !== 'book' && `${typeLabel[item.type]} · `}
+                        {(item.type !== 'book' || activeType === null) && `${typeLabel[item.type]} · `}
                         {item.category}
                       </span>
                       {isOwner && item.type === 'book' && (
