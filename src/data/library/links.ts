@@ -12,7 +12,7 @@ export const links: Book[] = [
     author: "colsto",
     type: "video",
     category: "Technology",
-    tags: ["privacy", "security", "osint", "geolocation", "audio forensics"],
+    tags: ["doppler effect", "physics", "acoustics", "sound", "geolocation", "privacy", "security", "osint", "audio forensics"],
     link: "https://youtu.be/UytYrhYLOKI",
   },
   {
