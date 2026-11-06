@@ -1,4 +1,4 @@
-export type MediaType = 'book' | 'article' | 'paper' | 'video' | 'podcast';
+export type MediaType = 'book' | 'article' | 'paper' | 'video' | 'podcast' | 'website';
 
 /** One entry in books.ts. `type` defaults to 'book' when omitted. */
 export interface Book {

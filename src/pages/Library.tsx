@@ -1,7 +1,10 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { Search, X, BookOpen, Filter } from 'lucide-react';
-import { useSearch } from '../hooks/useSearch';
-import { libraryItems, allCategories } from '../data/library';
+import { useSearchParams } from 'react-router-dom';
+import { Search, X, BookOpen, Filter, Play, FolderOpen } from 'lucide-react';
+import { useSearch, type TypeFilter } from '../hooks/useSearch';
+import { useOwnerMode, driveSearchUrl } from '../hooks/useOwnerMode';
+import { libraryItems, allCategories, mediaTypes, type LibraryItem, type MediaType } from '../data/library';
+import VideoDialog from '../components/VideoDialog';
 import {
   Table,
   TableHeader,
@@ -33,28 +36,64 @@ import { Checkbox } from '../components/ui/checkbox';
 
 const ITEMS_PER_PAGE = 15;
 
-const categoryCounts = libraryItems.reduce<Record<string, number>>((acc, item) => {
-  acc[item.category] = (acc[item.category] ?? 0) + 1;
+const typeCounts = libraryItems.reduce<Partial<Record<MediaType, number>>>((acc, item) => {
+  acc[item.type] = (acc[item.type] ?? 0) + 1;
   return acc;
 }, {});
+const tabs = [
+  { type: 'all' as TypeFilter, label: 'All', count: libraryItems.length },
+  ...mediaTypes.filter(t => typeCounts[t.type]).map(t => ({ ...t, count: typeCounts[t.type]! })),
+];
+const isTypeFilter = (v: string | null): v is TypeFilter => !!v && tabs.some(t => t.type === v);
+
+const typeLabel: Record<MediaType, string> = {
+  book: 'Book', article: 'Article', paper: 'Paper', video: 'Video', podcast: 'Podcast', website: 'Website',
+};
+const countLabel = (type: TypeFilter, n: number) => {
+  const word = type === 'all' ? 'item' : typeLabel[type].toLowerCase();
+  return `${n} ${word}${n === 1 ? '' : 's'}`;
+};
 
 const Library = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [playing, setPlaying] = useState<LibraryItem | null>(null);
   const tableTop = useRef<HTMLDivElement>(null);
+  const isOwner = useOwnerMode();
+  const [params, setParams] = useSearchParams();
+  const urlType = params.get('type');
 
   const {
     searchQuery,
     setSearchQuery,
+    selectedType,
+    setSelectedType,
     selectedCategories,
     filteredItems,
     toggleCategory,
     clearSelections,
     clearFilters
-  } = useSearch(libraryItems);
+  } = useSearch(libraryItems, isTypeFilter(urlType) ? urlType : 'all');
+
+  // Keep the tab in the URL so e.g. /#/library?type=video can be bookmarked.
+  const selectType = (type: TypeFilter) => {
+    setSelectedType(type);
+    clearSelections();
+    const next = new URLSearchParams(params);
+    if (type === 'all') next.delete('type'); else next.set('type', type);
+    next.delete('owner');
+    setParams(next, { replace: true });
+  };
+
+  // Category counts follow the selected tab.
+  const categoryCounts = useMemo(() => libraryItems.reduce<Record<string, number>>((acc, item) => {
+    if (selectedType === 'all' || item.type === selectedType) acc[item.category] = (acc[item.category] ?? 0) + 1;
+    return acc;
+  }, {}), [selectedType]);
+  const visibleCategories = allCategories.filter(c => categoryCounts[c]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategories]);
+  }, [searchQuery, selectedType, selectedCategories]);
 
   const goToPage = (page: number) => {
     setCurrentPage(page);
@@ -73,6 +112,28 @@ const Library = () => {
   return (
     <div className="page-container">
       <h1 className="page-title">Library</h1>
+
+      {tabs.length > 2 && (
+        <div className="mb-6 -mx-4 px-4 overflow-x-auto scrollbar-none">
+          <div role="tablist" aria-label="Media type" className="flex gap-2 w-max">
+            {tabs.map(tab => (
+              <button
+                key={tab.type}
+                role="tab"
+                aria-selected={selectedType === tab.type}
+                onClick={() => selectType(tab.type)}
+                className={`px-3 py-1.5 rounded-full text-sm border transition-colors whitespace-nowrap ${
+                  selectedType === tab.type
+                    ? 'bg-foreground text-background border-foreground'
+                    : 'border-border text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {tab.label} <span className="opacity-60 tabular-nums">{tab.count}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mb-8 flex flex-col sm:flex-row gap-4">
         <div className="relative flex-grow">
@@ -120,7 +181,7 @@ const Library = () => {
                 </Button>
               </div>
               <div className="space-y-2">
-                {allCategories.map(category => (
+                {visibleCategories.map(category => (
                   <div key={category} className="flex items-center">
                     <Checkbox
                       id={`category-${category}`}
@@ -139,7 +200,7 @@ const Library = () => {
             <div className="mt-8 pb-2">
               <SheetClose asChild>
                 <Button className="w-full">
-                  Show {filteredItems.length} {filteredItems.length === 1 ? 'book' : 'books'}
+                  Show {countLabel(selectedType, filteredItems.length)}
                 </Button>
               </SheetClose>
             </div>
@@ -168,7 +229,7 @@ const Library = () => {
 
       <div ref={tableTop} className="mb-4 scroll-mt-24">
         <p className="text-sm text-muted-foreground">
-          {filteredItems.length} {filteredItems.length === 1 ? 'book' : 'books'}
+          {countLabel(selectedType, filteredItems.length)}
         </p>
       </div>
 
@@ -177,7 +238,7 @@ const Library = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[55%]">Title</TableHead>
-              <TableHead className="w-[30%]">Author</TableHead>
+              <TableHead className="w-[30%]">By</TableHead>
               <TableHead className="w-[15%] text-right">Year</TableHead>
             </TableRow>
           </TableHeader>
@@ -186,20 +247,46 @@ const Library = () => {
               paginatedItems.map((item) => (
                 <TableRow key={item.id} className="hover:bg-muted/50 transition-colors">
                   <TableCell className="py-4 pr-4 align-top">
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium hover:text-blue-500 transition-colors"
-                    >
-                      {item.title}
-                    </a>
-                    <div className="mt-1 text-xs text-muted-foreground">{item.category}</div>
+                    {item.type === 'video' ? (
+                      <button
+                        onClick={() => setPlaying(item)}
+                        className="font-medium text-left hover:text-blue-500 transition-colors inline-flex items-start gap-1.5"
+                      >
+                        <Play className="h-3.5 w-3.5 mt-1 shrink-0 fill-current" aria-hidden="true" />
+                        <span>{item.title}</span>
+                      </button>
+                    ) : (
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium hover:text-blue-500 transition-colors"
+                      >
+                        {item.title}
+                      </a>
+                    )}
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
+                      <span>
+                        {item.type !== 'book' && `${typeLabel[item.type]} · `}
+                        {item.category}
+                      </span>
+                      {isOwner && item.type === 'book' && (
+                        <a
+                          href={driveSearchUrl(item.title)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-blue-500 hover:text-blue-600"
+                        >
+                          <FolderOpen className="h-3 w-3" aria-hidden="true" />
+                          Read
+                        </a>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="py-4 pr-4 text-sm align-top pt-4">{item.author}</TableCell>
                   <TableCell className="py-4 text-sm text-right tabular-nums align-top pt-4">
                     {item.publishedYear === undefined
-                      ? '—'
+                      ? (item.type === 'book' ? '—' : '')
                       : item.publishedYear < 0 ? `${-item.publishedYear} BC` : item.publishedYear}
                   </TableCell>
                 </TableRow>
@@ -209,7 +296,7 @@ const Library = () => {
                 <TableCell colSpan={3} className="py-8 text-center text-muted-foreground">
                   <div className="flex flex-col items-center">
                     <BookOpen className="h-8 w-8 mb-2 opacity-50" />
-                    <p>No books match your search.</p>
+                    <p>Nothing matches your search.</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -264,6 +351,8 @@ const Library = () => {
           </PaginationContent>
         </Pagination>
       )}
+
+      <VideoDialog video={playing} onClose={() => setPlaying(null)} />
     </div>
   );
 };
