@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Search, X, BookOpen, Filter } from 'lucide-react';
 import { useSearch } from '../hooks/useSearch';
-import { libraryItems, allCategories, filterTags } from '../data/library';
+import { libraryItems, allCategories } from '../data/library';
 import {
   Table,
   TableHeader,
@@ -45,10 +45,8 @@ const Library = () => {
   const {
     searchQuery,
     setSearchQuery,
-    selectedTags,
     selectedCategories,
     filteredItems,
-    toggleTag,
     toggleCategory,
     clearSelections,
     clearFilters
@@ -56,7 +54,7 @@ const Library = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedTags, selectedCategories]);
+  }, [searchQuery, selectedCategories]);
 
   const goToPage = (page: number) => {
     setCurrentPage(page);
@@ -64,11 +62,8 @@ const Library = () => {
   };
 
   const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
-  const activeFilters = selectedTags.length + selectedCategories.length;
-  const activeChips = [
-    ...selectedCategories.map(c => ({ label: c, remove: () => toggleCategory(c) })),
-    ...selectedTags.map(t => ({ label: t, remove: () => toggleTag(t) })),
-  ];
+  const activeFilters = selectedCategories.length;
+  const activeChips = selectedCategories.map(c => ({ label: c, remove: () => toggleCategory(c) }));
 
   const paginatedItems = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -86,7 +81,7 @@ const Library = () => {
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by title, author, category, or tag..."
+            placeholder="Search by title, author, or topic..."
             aria-label="Search the library"
             className="w-full pl-10 pr-10 py-2 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring text-sm bg-transparent transition-colors [&::-webkit-search-cancel-button]:hidden"
           />
@@ -114,7 +109,7 @@ const Library = () => {
           <SheetContent className="overflow-y-auto">
             <SheetHeader>
               <SheetTitle>Filters</SheetTitle>
-              <SheetDescription>Narrow the library by category and tag</SheetDescription>
+              <SheetDescription>Narrow the library by category</SheetDescription>
             </SheetHeader>
 
             <div className="mt-6">
@@ -137,22 +132,6 @@ const Library = () => {
                     </label>
                     <span className="text-xs text-muted-foreground">{categoryCounts[category]}</span>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <h3 className="text-sm font-medium mb-3">Tags</h3>
-              <div className="flex flex-wrap gap-2">
-                {filterTags.map(tag => (
-                  <Badge
-                    key={tag}
-                    variant={selectedTags.includes(tag) ? "default" : "outline"}
-                    className="cursor-pointer capitalize"
-                    onClick={() => toggleTag(tag)}
-                  >
-                    {tag}
-                  </Badge>
                 ))}
               </div>
             </div>
@@ -215,25 +194,7 @@ const Library = () => {
                     >
                       {item.title}
                     </a>
-                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1.5 text-xs text-muted-foreground">
-                      <button
-                        onClick={() => toggleCategory(item.category)}
-                        className={`font-medium hover:text-foreground transition-colors ${selectedCategories.includes(item.category) ? 'text-foreground' : ''}`}
-                        title={`Filter by ${item.category}`}
-                      >
-                        {item.category}
-                      </button>
-                      {item.tags.map(tag => (
-                        <button
-                          key={tag}
-                          onClick={() => toggleTag(tag)}
-                          className={`hover:text-blue-500 transition-colors ${selectedTags.includes(tag) ? 'text-blue-500' : ''}`}
-                          title={`Filter by "${tag}"`}
-                        >
-                          #{tag}
-                        </button>
-                      ))}
-                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">{item.category}</div>
                   </TableCell>
                   <TableCell className="py-4 pr-4 text-sm align-top pt-4">{item.author}</TableCell>
                   <TableCell className="py-4 text-sm text-right tabular-nums align-top pt-4">
