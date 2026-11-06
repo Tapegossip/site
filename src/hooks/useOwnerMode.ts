@@ -14,7 +14,7 @@ const read = () => {
 /**
  * Personal-only UI (e.g. "Read in my Drive" buttons). Not a security boundary: it only
  * shows links that are useless to anyone else, such as a search of the viewer's own Drive.
- * Turn on per device with ?owner (e.g. /#/library?owner), off with ?owner=off.
+ * Turn on per device with ?owner (e.g. /library?owner), off with ?owner=off.
  */
 export function useOwnerMode() {
   const { search } = useLocation();

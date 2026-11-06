@@ -12,7 +12,7 @@ Usage (from the repo root):
         videos   -> transcript + description + YouTube keywords
         articles -> the article text;  websites -> title, description, headings
         books    -> Open Library subjects + description
-      --all re-indexes everything; --retry re-tries items that failed before;
+      --all re-indexes everything; --retry re-tries failed items and videos without a transcript;
       --only limits to items whose id contains TEXT.
   python scripts/library.py format
       Rewrites books.json / links.json in the canonical layout.
@@ -311,6 +311,11 @@ def build_entry(item: dict) -> tuple[dict, dict]:
     return {"src": src, "w": " ".join(words)}, found
 
 
+def needs_retry(item: dict, entry: dict) -> bool:
+    """Failed before, or a video indexed without its transcript."""
+    return entry["src"] == "none" or (item.get("type") == "video" and entry["src"] != "transcript")
+
+
 def cmd_index(args) -> None:
     books, links = load(BOOKS), load(LINKS)
     items = books + links
@@ -319,7 +324,7 @@ def cmd_index(args) -> None:
     for stale in [k for k in index if k not in ids]:
         del index[stale]
     todo = [i for i in items
-            if (args.all or item_id(i) not in index or (args.retry and index[item_id(i)]["src"] == "none"))
+            if (args.all or item_id(i) not in index or (args.retry and needs_retry(i, index[item_id(i)])))
             and (not args.only or args.only.lower() in item_id(i))]
     print(f"Indexing {len(todo)} of {len(items)} items...")
     changed_meta = False
@@ -355,6 +360,11 @@ def cmd_add(args) -> None:
     else:
         kind = "article"
 
+    if is_url:
+        for existing in books + links:
+            if existing.get("link") == target:
+                sys.exit(f"Already in the library: {existing['title']}")
+
     item: dict = {"title": args.title or (None if is_url else target), "author": args.author}
     if is_url:
         item["link"] = target
@@ -365,7 +375,8 @@ def cmd_add(args) -> None:
     entry, found = build_entry(draft)
 
     item["title"] = item["title"] or found.get("title") or target
-    item["author"] = item["author"] or found.get("author") or "Unknown"
+    host = (urllib.parse.urlparse(target).hostname or "").removeprefix("www.") if is_url else ""
+    item["author"] = item["author"] or found.get("author") or host or "Unknown"
     year = args.year or found.get("year")
     if year:
         item["publishedYear"] = int(year)
@@ -402,6 +413,56 @@ def cmd_add(args) -> None:
         print("  ! No --tags given.")
 
 
+def cmd_from_issue(_args) -> None:
+    """GitHub Actions: add the item described by an issue (env ISSUE_TITLE / ISSUE_BODY).
+
+    Title: the link, or a book title. Body (all optional), one per line:
+      category: Trading
+      tags: options, volatility
+      note: words you'll remember it by
+      type: article
+    Writes a Markdown summary to $RESULT_FILE for the issue comment.
+    """
+    import os
+    title = os.environ.get("ISSUE_TITLE", "").strip()
+    fields = {}
+    for line in os.environ.get("ISSUE_BODY", "").splitlines():
+        m = re.match(r"^\s*(category|tags|note|type|title|author|year)\s*:\s*(.*?)\s*$", line, re.I)
+        if m and m.group(2):
+            fields[m.group(1).lower()] = m.group(2)
+    if not title:
+        sys.exit("Issue title is empty: put the link or book title in the title.")
+    url = re.search(r"https?://\S+", title)
+    args = argparse.Namespace(
+        target=url.group(0) if url else title,
+        type=fields.get("type", "").lower() or None,
+        category=fields.get("category"), tags=fields.get("tags"), note=fields.get("note"),
+        title=fields.get("title"), author=fields.get("author"),
+        year=int(fields["year"]) if fields.get("year", "").isdigit() else None,
+    )
+    if args.type and args.type not in ("book", "video", "article", "website", "paper", "podcast"):
+        sys.exit(f"Unknown type: {args.type}")
+    before = {item_id(i) for i in load(BOOKS) + load(LINKS)}
+    cmd_add(args)
+    added = [i for i in load(BOOKS) + load(LINKS) if item_id(i) not in before]
+    if not added:
+        sys.exit("Nothing was added.")
+    item = added[0]
+    entry = load_index().get(item_id(item), {"src": "none", "w": ""})
+    lines = [f"Added **{item['title']}** by {item['author']}",
+             f"- Type: {item.get('type', 'book')} · Category: {item['category']}"
+             + (f" · Year: {item['publishedYear']}" if item.get("publishedYear") else ""),
+             f"- Tags: {', '.join(item['tags']) or '(none)'}",
+             f"- Search index: {entry['src']}, {len(entry['w'].split())} words"]
+    if item.get("type") == "video" and entry["src"] != "transcript":
+        lines.append("- No transcript here (YouTube often blocks cloud servers). "
+                     "On your PC: `npm run index -- --retry` then push.")
+    result = os.environ.get("RESULT_FILE")
+    if result:
+        Path(result).write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print("\n".join(lines))
+
+
 def cmd_format(_args) -> None:
     save_all(load(BOOKS), load(LINKS))
     print("Formatted books.json and links.json.")
@@ -427,6 +488,8 @@ def main() -> None:
     i.add_argument("--retry", action="store_true")
     i.add_argument("--only")
     i.set_defaults(func=cmd_index)
+    g = sub.add_parser("from-issue", help="(GitHub Actions) add the item described by an issue")
+    g.set_defaults(func=cmd_from_issue)
     f = sub.add_parser("format", help="rewrite data files in canonical layout")
     f.set_defaults(func=cmd_format)
     args = p.parse_args()

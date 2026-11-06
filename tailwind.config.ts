@@ -1,5 +1,6 @@
 
 import type { Config } from "tailwindcss";
+import animate from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
@@ -7,7 +8,7 @@ export default {
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
 		"./app/**/*.{ts,tsx}",
-		"./src/**/*.{ts,tsx}",
+		"./src/**/*.{ts,tsx,md}",
 	],
 	prefix: "",
 	theme: {
@@ -93,6 +94,10 @@ export default {
 				'slide-down': {
 					'0%': { transform: 'translateY(-20px)', opacity: '0' },
 					'100%': { transform: 'translateY(0)', opacity: '1' }
+				},
+				'nudge-in': {
+					'0%': { transform: 'translateX(-10px)', opacity: '0' },
+					'100%': { transform: 'translateX(0)', opacity: '1' }
 				}
 			},
 			animation: {
@@ -101,7 +106,13 @@ export default {
 				'fade-in': 'fade-in 0.5s ease-out forwards',
 				'fade-out': 'fade-out 0.5s ease-out forwards',
 				'slide-up': 'slide-up 0.5s ease-out forwards',
-				'slide-down': 'slide-down 0.5s ease-out forwards'
+				'slide-down': 'slide-down 0.5s ease-out forwards',
+				// Entrance animations (replace framer-motion). `both` keeps the start state during any delay.
+				'rise': 'slide-up 0.4s ease-out both',
+				'rise-slow': 'slide-up 0.5s ease-out both',
+				'appear': 'fade-in 0.5s ease-out both',
+				'appear-fast': 'fade-in 0.2s ease-out both',
+				'nudge-in': 'nudge-in 0.3s ease-out both'
 			},
 			fontFamily: {
 				'sans': ['Inter', 'sans-serif'],
@@ -114,5 +125,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [animate],
 } satisfies Config;

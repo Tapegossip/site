@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 
 type Theme = 'dark' | 'light';
@@ -24,7 +23,7 @@ const ThemeToggle = () => {
   };
 
   return (
-    <motion.div whileTap={{ scale: 0.9 }} whileHover={{ rotate: 15 }}>
+    <div className="transition-transform duration-200 hover:rotate-[15deg] active:scale-90">
       <Button
         variant="ghost"
         size="icon"
@@ -38,7 +37,7 @@ const ThemeToggle = () => {
           <Moon className="h-[18px] w-[18px]" />
         )}
       </Button>
-    </motion.div>
+    </div>
   );
 };
 

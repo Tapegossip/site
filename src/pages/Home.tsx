@@ -1,35 +1,13 @@
-import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { essays } from '../data/essays';
 import { ArrowRight } from 'lucide-react';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const Home = () => {
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
-  };
-  
+  usePageTitle();
   return (
     <div className="page-container">
-      <motion.div
-        initial="hidden"
-        animate={mounted ? "visible" : "hidden"}
-        variants={containerVariants}
-        className="space-y-16"
-      >
+      <div className="space-y-16 animate-appear">
         {/* About Me Section */}
         <section className="mb-16">
           <h2 className="text-2xl md:text-3xl font-heading font-bold mb-6">About Me</h2>
@@ -51,19 +29,14 @@ const Home = () => {
           <h2 className="text-2xl md:text-3xl font-heading font-bold mb-6">Essays:</h2>
           <div className="space-y-4">
             {essays.map((essay, index) => (
-              <motion.div
-                key={essay.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
+              <div key={essay.slug} className="animate-rise" style={{ animationDelay: `${index * 0.1}s` }}>
                 <Link 
                   to={`/essay/${essay.slug}`}
                   className="text-blue-500 hover:text-blue-600 transition-colors font-medium"
                 >
-                  {essay.mainTitle}
+                  {essay.title}
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
           
@@ -77,7 +50,7 @@ const Home = () => {
             </Link>
           </div>
         </section>
-      </motion.div>
+      </div>
     </div>
   );
 };

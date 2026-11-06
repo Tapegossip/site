@@ -5,6 +5,7 @@ import { useSearch } from '../hooks/useSearch';
 import { useOwnerMode, driveSearchUrl } from '../hooks/useOwnerMode';
 import { libraryItems, allCategories, mediaTypes, type LibraryItem, type MediaType } from '../data/library';
 import VideoDialog from '../components/VideoDialog';
+import { usePageTitle } from '../hooks/usePageTitle';
 import {
   Table,
   TableHeader,
@@ -56,6 +57,7 @@ const countLabel = (type: MediaType | null, n: number) => {
 };
 
 const Library = () => {
+  usePageTitle('Library');
   const [currentPage, setCurrentPage] = useState(1);
   const [playing, setPlaying] = useState<LibraryItem | null>(null);
   const tableTop = useRef<HTMLDivElement>(null);
@@ -79,7 +81,7 @@ const Library = () => {
   } = useSearch(libraryItems, isTabType(urlType) ? urlType : tabs[0].type);
 
   const onTabClick = (type: MediaType) => {
-    // While browsing, keep the tab in the URL so e.g. /#/library?type=video can be bookmarked.
+    // While browsing, keep the tab in the URL so e.g. /library?type=video can be bookmarked.
     if (!isSearching) {
       const next = new URLSearchParams(params);
       if (type === tabs[0].type) next.delete('type'); else next.set('type', type);

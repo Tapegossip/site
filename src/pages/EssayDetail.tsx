@@ -1,20 +1,14 @@
 
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
 import { essays } from '../data/essays';
 import { ArrowLeft } from 'lucide-react';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const EssayDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  
   const essay = essays.find(e => e.slug === slug);
+  usePageTitle(essay ? essay.title : 'Essay not found');
   
   if (!essay) {
     return (
@@ -35,25 +29,17 @@ const EssayDetail = () => {
   
   return (
     <div className="page-container">
-      <motion.button
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3 }}
+      <button
         onClick={() => navigate(-1)}
-        className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors animate-nudge-in"
       >
         <ArrowLeft className="h-4 w-4" />
         Back
-      </motion.button>
+      </button>
       
-      <motion.article
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-3xl mx-auto"
-      >
+      <article className="max-w-3xl mx-auto animate-appear">
         <header className="mb-12">
-          <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">{essay.mainTitle}</h1>
+          <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">{essay.title}</h1>
           {essay.subtitle && (
             <p className="text-xl text-muted-foreground mb-4">{essay.subtitle}</p>
           )}
@@ -67,8 +53,8 @@ const EssayDetail = () => {
         </header>
         
         <div 
-          className="prose dark:prose-invert prose-sm sm:prose-base max-w-none"
-          dangerouslySetInnerHTML={{ __html: essay.content }}
+          className="max-w-none"
+          dangerouslySetInnerHTML={{ __html: essay.html }}
         />
         
         <div className="mt-12 pt-6 border-t border-border flex gap-2 flex-wrap">
@@ -81,7 +67,7 @@ const EssayDetail = () => {
             </span>
           ))}
         </div>
-      </motion.article>
+      </article>
     </div>
   );
 };

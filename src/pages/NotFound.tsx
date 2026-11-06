@@ -1,18 +1,14 @@
 
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 const NotFound = () => {
+  usePageTitle('Page not found');
   const navigate = useNavigate();
 
   return (
     <div className="py-32 flex items-center justify-center">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center space-y-6"
-      >
+      <div className="text-center space-y-6 animate-rise-slow">
         <h1 className="text-4xl md:text-6xl font-heading font-bold">404</h1>
         <p className="text-xl text-muted-foreground mb-8">Page not found</p>
         <button 
@@ -21,7 +17,7 @@ const NotFound = () => {
         >
           Return Home
         </button>
-      </motion.div>
+      </div>
     </div>
   );
 };
