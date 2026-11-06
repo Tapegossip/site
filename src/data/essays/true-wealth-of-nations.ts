@@ -146,7 +146,7 @@ export const trueWealthOfNations: Essay = {
 <h3 class="text-lg font-bold mt-6 mb-3">The Historical Pattern of Empire</h3>
 
 <div class="my-8">
-  <img src="/images/great-empires.png" alt="Graph showing the relative power of major empires from 1500-2000" class="w-full rounded-lg shadow-lg" />
+  <img src="/images/great-empires.webp" alt="Graph showing the relative power of major empires from 1500-2000" width="1600" height="900" loading="lazy" class="h-auto w-full rounded-lg shadow-lg" />
   <p class="text-sm text-gray-600 mt-2">The rise and fall of major empires from 1500 to 2000, showing relative power levels over time. Notice the cyclical pattern of power transitions and the increasing rate of change in recent centuries.</p>
 </div>
 

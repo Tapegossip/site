@@ -24,7 +24,7 @@ const EssayDetail = () => {
           <p className="text-muted-foreground">The essay you're looking for doesn't exist or has been moved.</p>
           <button 
             onClick={() => navigate(-1)}
-            className="px-4 py-2 rounded-md glass-morphism hover:bg-white/10 transition-colors"
+            className="px-4 py-2 rounded-md border border-border hover:bg-muted transition-colors"
           >
             Go Back
           </button>
@@ -67,15 +67,15 @@ const EssayDetail = () => {
         </header>
         
         <div 
-          className="prose prose-invert prose-sm sm:prose-base max-w-none"
+          className="prose dark:prose-invert prose-sm sm:prose-base max-w-none"
           dangerouslySetInnerHTML={{ __html: essay.content }}
         />
         
-        <div className="mt-12 pt-6 border-t border-white/10 flex gap-2 flex-wrap">
+        <div className="mt-12 pt-6 border-t border-border flex gap-2 flex-wrap">
           {essay.tags.map(tag => (
             <span 
               key={tag}
-              className="px-2 py-1 text-xs bg-white/5 rounded-full text-muted-foreground"
+              className="px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground"
             >
               {tag}
             </span>

@@ -105,7 +105,7 @@ export default {
 			},
 			fontFamily: {
 				'sans': ['Inter', 'sans-serif'],
-				'mono': ['JetBrains Mono', 'monospace'],
+				'mono': ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
 				'heading': ['Space Grotesk', 'sans-serif']
 			},
 			transitionDuration: {

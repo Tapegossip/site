@@ -1,30 +1,19 @@
-
 export type MediaType = 'book' | 'article' | 'paper' | 'video' | 'podcast';
 
-export interface LibraryItem {
-  id: string;
+/** One entry in books.ts. `type` defaults to 'book' when omitted. */
+export interface Book {
   title: string;
   author: string;
   publishedYear: number;
-  link: string;
+  category: string;
   tags: string[];
-  type: MediaType;
+  link: string;
+  type?: MediaType;
   description?: string;
 }
 
-// Utility functions to get all unique tags and media types
-export const getAllTags = (items: LibraryItem[]): string[] => {
-  const tagsSet = new Set<string>();
-  items.forEach(item => {
-    item.tags.forEach(tag => tagsSet.add(tag));
-  });
-  return Array.from(tagsSet).sort();
-};
-
-export const getAllMediaTypes = (items: LibraryItem[]): MediaType[] => {
-  const typesSet = new Set<MediaType>();
-  items.forEach(item => {
-    typesSet.add(item.type);
-  });
-  return Array.from(typesSet).sort();
-};
+/** A Book with the fields the UI needs filled in. */
+export interface LibraryItem extends Book {
+  id: string;
+  type: MediaType;
+}

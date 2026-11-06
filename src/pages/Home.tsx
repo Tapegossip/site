@@ -2,12 +2,10 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { essays } from '../data/essays';
-import { ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ArrowRight } from 'lucide-react';
 
 const Home = () => {
   const [mounted, setMounted] = useState(false);
-  const [isAboutExpanded, setIsAboutExpanded] = useState(false);
   
   useEffect(() => {
     setMounted(true);
@@ -35,42 +33,17 @@ const Home = () => {
         {/* About Me Section */}
         <section className="mb-16">
           <h2 className="text-2xl md:text-3xl font-heading font-bold mb-6">About Me</h2>
-          <Collapsible
-            open={isAboutExpanded}
-            onOpenChange={setIsAboutExpanded}
-            className="w-full"
-          >
-            <div>
-              <p className="mb-4">
-                I'm a trader and researcher exploring the intersections of markets, risk, and human behavior. My work focuses on understanding how financial systems evolve, the psychological forces driving market dynamics, and how we can better design strategies for long-term success.
-              </p>
-              <CollapsibleContent>
-                <div className="mt-4 space-y-4">
-                  <p>
-                    Currently, I'm studying market cycles, liquidity flows, and the impact of macroeconomic trends on asset pricing. When not analyzing charts or refining strategies, I'm usually reading about economic history, complex systems, or the behavioral patterns that shape financial decision-making.
-                  </p>
-                  <p>
-                    My background spans multiple disciplines, giving me a unique perspective on market structure and risk. I believe in the power of rigorous analysis, adaptive thinking, and continuous learning to navigate uncertainty and build a sustainable trading edge.
-                  </p>
-                </div>
-              </CollapsibleContent>
-            </div>
-            <div className="mt-4">
-              <CollapsibleTrigger className="inline-flex items-center gap-2 text-sm text-blue-500 hover:text-blue-600 transition-colors">
-                {isAboutExpanded ? (
-                  <>
-                    Show less
-                    <ArrowUp className="h-4 w-4" />
-                  </>
-                ) : (
-                  <>
-                    Learn more about me
-                    <ArrowDown className="h-4 w-4" />
-                  </>
-                )}
-              </CollapsibleTrigger>
-            </div>
-          </Collapsible>
+          <div className="space-y-4">
+            <p>
+              I'm a trader and researcher exploring the intersections of markets, risk, and human behavior. My work focuses on understanding how financial systems evolve, the psychological forces driving market dynamics, and how we can better design strategies for long-term success.
+            </p>
+            <p>
+              Currently, I'm studying market cycles, liquidity flows, and the impact of macroeconomic trends on asset pricing. When not analyzing charts or refining strategies, I'm usually reading about economic history, complex systems, or the behavioral patterns that shape financial decision-making.
+            </p>
+            <p>
+              My background spans multiple disciplines, giving me a unique perspective on market structure and risk. I believe in the power of rigorous analysis, adaptive thinking, and continuous learning to navigate uncertainty and build a sustainable trading edge.
+            </p>
+          </div>
         </section>
         
         {/* Essays Section */}

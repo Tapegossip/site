@@ -1,70 +1,43 @@
+import { useState, useMemo } from 'react';
+import type { LibraryItem } from '../data/library';
 
-import { useState, useEffect, useMemo } from 'react';
-import { LibraryItem } from '../data/library';
+const toggle = (list: string[], value: string) =>
+  list.includes(value) ? list.filter(v => v !== value) : [...list, value];
 
-interface SearchOptions {
-  initialItems: LibraryItem[];
-  initialFilters?: {
-    tags: string[];
-    types: string[];
-  };
-}
-
-export function useSearch({ initialItems, initialFilters = { tags: [], types: [] } }: SearchOptions) {
+export function useSearch(items: LibraryItem[]) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTags, setSelectedTags] = useState<string[]>(initialFilters.tags);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>(initialFilters.types);
-  
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
   const filteredItems = useMemo(() => {
-    return initialItems.filter(item => {
-      // Apply search filter
-      const matchesSearch = searchQuery === '' || 
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      // Apply tag filter
-      const matchesTags = selectedTags.length === 0 || 
-        selectedTags.some(tag => item.tags.includes(tag));
-      
-      // Apply type filter
-      const matchesTypes = selectedTypes.length === 0 || 
-        selectedTypes.includes(item.type);
-      
-      return matchesSearch && matchesTags && matchesTypes;
-    });
-  }, [initialItems, searchQuery, selectedTags, selectedTypes]);
-
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag) 
-        : [...prev, tag]
+    const q = searchQuery.trim().toLowerCase();
+    return items.filter(item =>
+      (q === '' ||
+        item.title.toLowerCase().includes(q) ||
+        item.author.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q) ||
+        item.tags.some(tag => tag.toLowerCase().includes(q))) &&
+      (selectedCategories.length === 0 || selectedCategories.includes(item.category)) &&
+      (selectedTags.length === 0 || selectedTags.some(tag => item.tags.includes(tag)))
     );
-  };
-
-  const toggleType = (type: string) => {
-    setSelectedTypes(prev => 
-      prev.includes(type) 
-        ? prev.filter(t => t !== type) 
-        : [...prev, type]
-    );
-  };
-
-  const clearFilters = () => {
-    setSelectedTags([]);
-    setSelectedTypes([]);
-    setSearchQuery('');
-  };
+  }, [items, searchQuery, selectedTags, selectedCategories]);
 
   return {
     searchQuery,
     setSearchQuery,
     selectedTags,
-    selectedTypes,
+    selectedCategories,
     filteredItems,
-    toggleTag,
-    toggleType,
-    clearFilters
+    toggleTag: (tag: string) => setSelectedTags(prev => toggle(prev, tag)),
+    toggleCategory: (c: string) => setSelectedCategories(prev => toggle(prev, c)),
+    clearSelections: () => {
+      setSelectedTags([]);
+      setSelectedCategories([]);
+    },
+    clearFilters: () => {
+      setSelectedTags([]);
+      setSelectedCategories([]);
+      setSearchQuery('');
+    },
   };
 }

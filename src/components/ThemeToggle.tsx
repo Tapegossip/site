@@ -1,56 +1,35 @@
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 
+type Theme = 'dark' | 'light';
+
 const ThemeToggle = () => {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    // Mark component as mounted
-    setMounted(true);
-    
-    // Check if user has a preferred theme in localStorage
-    const savedTheme = localStorage.getItem('theme') || 
-                     (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    
-    applyTheme(savedTheme as 'dark' | 'light');
-  }, []);
-
-  const applyTheme = (newTheme: 'dark' | 'light') => {
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-      document.documentElement.style.colorScheme = 'dark';
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.style.colorScheme = 'light';
-    }
-    
-    localStorage.setItem('theme', newTheme);
-    setTheme(newTheme);
-  }
+  // index.html has already applied the saved/system theme before React loads.
+  const [theme, setTheme] = useState<Theme>(() =>
+    document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+  );
 
   const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    applyTheme(newTheme);
+    const next: Theme = theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.classList.toggle('dark', next === 'dark');
+    document.documentElement.style.colorScheme = next;
+    try {
+      localStorage.setItem('theme', next);
+    } catch {
+      // Storage blocked (private mode); the theme still applies for this visit.
+    }
+    setTheme(next);
   };
 
-  // Prevent flash of incorrect theme
-  if (!mounted) return null;
-
-  // Instead of using the Button with motion props directly, we'll wrap the button in a motion.div
   return (
-    <motion.div
-      whileTap={{ scale: 0.9 }}
-      whileHover={{ rotate: 15 }}
-    >
+    <motion.div whileTap={{ scale: 0.9 }} whileHover={{ rotate: 15 }}>
       <Button
         variant="ghost"
         size="icon"
         onClick={toggleTheme}
-        className="p-0 hover:bg-slate-100 dark:hover:bg-white/5"
+        className="p-0 hover:bg-muted"
         aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
       >
         {theme === 'dark' ? (

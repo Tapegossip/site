@@ -6,7 +6,7 @@ const NotFound = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="py-32 flex items-center justify-center">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -17,7 +17,7 @@ const NotFound = () => {
         <p className="text-xl text-muted-foreground mb-8">Page not found</p>
         <button 
           onClick={() => navigate('/')}
-          className="px-6 py-3 glass-morphism rounded-md hover:bg-white/10 transition-colors"
+          className="px-6 py-3 border border-border rounded-md hover:bg-muted transition-colors"
         >
           Return Home
         </button>
