@@ -11,7 +11,18 @@ export interface Book {
   link: string;
   type?: MediaType;
   description?: string;
+  /** Extra searchable words (e.g. what you'll remember it by). Never displayed. */
+  note?: string;
 }
+
+/** search-index.json: words from transcripts / article text / book subjects, keyed by item id. */
+export interface SearchIndexEntry {
+  /** Where the words came from: transcript, description, article, site, paper, catalog, none. */
+  src: string;
+  /** Space-separated distinct words. */
+  w: string;
+}
+export type SearchIndex = Record<string, SearchIndexEntry>;
 
 /** A Book with the fields the UI needs filled in. */
 export interface LibraryItem extends Book {

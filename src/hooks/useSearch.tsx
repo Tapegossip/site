@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import type { LibraryItem, MediaType } from '../data/library';
+import { useState, useMemo, useEffect } from 'react';
+import { loadSearchIndex, type LibraryItem, type MediaType, type SearchIndex } from '../data/library';
 
 const normalize = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
@@ -25,35 +25,64 @@ const withinOneEdit = (a: string, b: string) => {
 
 export interface Indexed {
   item: LibraryItem;
-  text: string;      // all searchable text, for substring matches
-  words: string[];   // individual words, for typo-tolerant matches
+  text: string;      // title, author, category, tags, note: for substring matches
+  words: string[];   // the same, as words
+  extra: string[];   // words from the full-text index (transcript, article, book subjects)
+  src?: string;      // where `extra` came from
+}
+
+/** Why an item matched, when it was only through the full-text index. */
+export interface MatchInfo {
+  src: string;       // transcript, article, catalog, ...
+  words: string[];   // the indexed words that matched (e.g. "doppler" for a search of "dopler")
 }
 
 /** Shorter words get no typo tolerance: "risk" vs "rise", "bond" vs "band" would be noise. */
 const MIN_FUZZY_LENGTH = 5;
 
-export const buildIndex = (items: LibraryItem[]): Indexed[] => items.map(item => {
-  const text = normalize([item.title, item.author, item.category, ...item.tags].join(' '));
-  return { item, text, words: [...new Set(text.split(/[^a-z0-9]+/).filter(Boolean))] };
+const toWords = (text: string) => [...new Set(text.split(/[^a-z0-9]+/).filter(Boolean))];
+
+export const buildIndex = (items: LibraryItem[], fullText: SearchIndex = {}): Indexed[] => items.map(item => {
+  const text = normalize([item.title, item.author, item.category, item.note ?? '', ...item.tags].join(' '));
+  const entry = fullText[item.id];
+  return { item, text, words: toWords(text), extra: entry ? entry.w.split(' ') : [], src: entry?.src };
 });
 
 /**
- * Builds a predicate for a query. Every query word must match the start of some word
+ * Builds a matcher for a query. Every query word must match the start of some word
  * ("rise" finds "rises", not "enterprise"). Only when a word (5+ letters) matches nothing in the
  * whole library is it treated as a typo and allowed one edit ("dopler" → "doppler",
  * "techincal" → "technical"); so "status" never drifts to "states". Words with symbols
  * (e.g. "c++") use a plain substring match.
+ *
+ * The matcher returns null for no match, otherwise the words that matched only via the
+ * full-text index (empty if everything matched the title/author/tags).
  */
 export const createMatcher = (index: Indexed[], query: string) => {
   const terms = normalize(query).split(/\s+/).filter(Boolean).map(q => {
     if (/[^a-z0-9]/.test(q)) return { q, mode: 'substring' as const };
-    const exactSomewhere = index.some(e => e.words.some(w => w.startsWith(q)));
+    const exactSomewhere = index.some(e => e.words.some(w => w.startsWith(q)) || e.extra.some(w => w.startsWith(q)));
     return { q, mode: !exactSomewhere && q.length >= MIN_FUZZY_LENGTH ? 'fuzzy' as const : 'prefix' as const };
   });
-  return (entry: Indexed) => terms.every(({ q, mode }) =>
-    mode === 'substring' ? entry.text.includes(q)
-      : mode === 'prefix' ? entry.words.some(w => w.startsWith(q))
-      : entry.words.some(w => withinOneEdit(q, w)));
+  const test = (q: string, mode: 'prefix' | 'fuzzy') =>
+    mode === 'prefix' ? (w: string) => w.startsWith(q) : (w: string) => withinOneEdit(q, w);
+
+  return (entry: Indexed): string[] | null => {
+    const viaIndex: string[] = [];
+    for (const { q, mode } of terms) {
+      if (mode === 'substring') {
+        if (entry.text.includes(q)) continue;
+        if (entry.extra.some(w => w.includes(q))) { viaIndex.push(q); continue; }
+        return null;
+      }
+      const hit = test(q, mode);
+      if (entry.words.some(hit)) continue;
+      const found = entry.extra.find(hit);
+      if (!found) return null;
+      viaIndex.push(found);
+    }
+    return viaIndex;
+  };
 };
 
 /** True if every query word starts a word in the title (used to rank title hits first). */
@@ -91,18 +120,32 @@ export function useSearch(items: LibraryItem[], initialType: MediaType) {
     else setBrowseType(type);
   };
 
-  const index = useMemo(() => buildIndex(items), [items]);
+  // The full-text index is a separate file, fetched the first time someone searches.
+  const [fullText, setFullText] = useState<SearchIndex | null>(null);
+  useEffect(() => {
+    if (!isSearching || fullText) return;
+    let cancelled = false;
+    loadSearchIndex().then(idx => { if (!cancelled) setFullText(idx); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [isSearching, fullText]);
 
-  // Items matching the search text, across all types (drives the per-tab counts).
-  const textMatches = useMemo(() => {
-    const matches = createMatcher(index, searchQuery);
-    const found = index.filter(matches).map(entry => entry.item);
-    if (searchQuery.trim() === '') return found;
-    // Title hits first, otherwise keep library order (sort is stable).
-    return found
-      .map(item => ({ item, rank: titleHit(item, searchQuery) ? 0 : 1 }))
-      .sort((a, b) => a.rank - b.rank)
-      .map(r => r.item);
+  const index = useMemo(() => buildIndex(items, fullText ?? {}), [items, fullText]);
+
+  // Items matching the search text, across all types (drives the per-tab counts),
+  // plus why each matched when it was only through its transcript / text / subjects.
+  const { textMatches, matchInfo } = useMemo(() => {
+    const matcher = createMatcher(index, searchQuery);
+    const info = new Map<string, MatchInfo>();
+    const hits: { item: LibraryItem; rank: number }[] = [];
+    for (const entry of index) {
+      const via = matcher(entry);
+      if (via === null) continue;
+      if (via.length) info.set(entry.item.id, { src: entry.src ?? 'index', words: [...new Set(via)] });
+      // Title hits first, then title/author/tag hits, then full-text-only hits; stable otherwise.
+      hits.push({ item: entry.item, rank: titleHit(entry.item, searchQuery) ? 0 : via.length ? 2 : 1 });
+    }
+    if (searchQuery.trim() !== '') hits.sort((a, b) => a.rank - b.rank);
+    return { textMatches: hits.map(h => h.item), matchInfo: info };
   }, [index, searchQuery]);
 
   const countsByType = useMemo(() => textMatches.reduce<Partial<Record<MediaType, number>>>((acc, item) => {
@@ -125,6 +168,7 @@ export function useSearch(items: LibraryItem[], initialType: MediaType) {
     selectedCategories,
     filteredItems,
     countsByType,
+    matchInfo,
     toggleCategory: (c: string) =>
       setSelectedCategories(prev => (prev.includes(c) ? prev.filter(v => v !== c) : [...prev, c])),
     clearSelections: () => setSelectedCategories([]),

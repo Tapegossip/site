@@ -1,8 +1,17 @@
-import { books } from './books';
-import { links } from './links';
-import type { LibraryItem, MediaType } from './types';
+import booksData from './books.json';
+import linksData from './links.json';
+import type { Book, LibraryItem, MediaType, SearchIndex } from './types';
 
+// Data lives in JSON so scripts/library.py can add items; see that script for the workflow.
+const books = booksData as Book[];
+const links = linksData as Book[];
+
+/** Must match slug() in scripts/library.py: ids key the search index. */
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+/** Full-text search words, fetched only when someone starts searching. */
+export const loadSearchIndex = (): Promise<SearchIndex> =>
+  import('./search-index.json').then(m => m.default as SearchIndex);
 
 export const libraryItems: LibraryItem[] = [...books, ...links].map(item => ({
   ...item,

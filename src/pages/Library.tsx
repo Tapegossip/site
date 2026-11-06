@@ -43,6 +43,12 @@ const isTabType = (v: string | null): v is MediaType => !!v && tabs.some(t => t.
 const typeLabel: Record<MediaType, string> = {
   book: 'Book', article: 'Article', paper: 'Paper', video: 'Video', podcast: 'Podcast', website: 'Website',
 };
+/** Where a full-text match came from (see `src` in scripts/library.py). */
+const matchSource: Record<string, string> = {
+  transcript: 'in transcript', description: 'in video description', article: 'in article',
+  site: 'on site', paper: 'in paper', catalog: 'in book subjects',
+};
+
 /** "12 videos", or "12 results" for a search across every type. */
 const countLabel = (type: MediaType | null, n: number) => {
   const word = type === null ? 'result' : typeLabel[type].toLowerCase();
@@ -66,6 +72,7 @@ const Library = () => {
     selectedCategories,
     filteredItems,
     countsByType,
+    matchInfo,
     toggleCategory,
     clearSelections,
     clearFilters
@@ -286,6 +293,12 @@ const Library = () => {
                         </a>
                       )}
                     </div>
+                    {matchInfo.has(item.id) && (
+                      <div className="mt-1 text-xs text-muted-foreground italic">
+                        Found {matchSource[matchInfo.get(item.id)!.src] ?? 'in its text'}:{' '}
+                        <span className="not-italic text-foreground/80">{matchInfo.get(item.id)!.words.join(', ')}</span>
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell className="py-4 pr-4 text-sm align-top pt-4">{item.author}</TableCell>
                   <TableCell className="py-4 text-sm text-right tabular-nums align-top pt-4">
