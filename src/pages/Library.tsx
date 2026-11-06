@@ -206,7 +206,7 @@ const Library = () => {
             {paginatedItems.length > 0 ? (
               paginatedItems.map((item) => (
                 <TableRow key={item.id} className="hover:bg-muted/50 transition-colors">
-                  <TableCell className="py-4 pr-4">
+                  <TableCell className="py-4 pr-4 align-top">
                     <a
                       href={item.link}
                       target="_blank"
@@ -215,11 +215,31 @@ const Library = () => {
                     >
                       {item.title}
                     </a>
-                    <div className="text-xs text-muted-foreground mt-1">{item.category}</div>
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1.5 text-xs text-muted-foreground">
+                      <button
+                        onClick={() => toggleCategory(item.category)}
+                        className={`font-medium hover:text-foreground transition-colors ${selectedCategories.includes(item.category) ? 'text-foreground' : ''}`}
+                        title={`Filter by ${item.category}`}
+                      >
+                        {item.category}
+                      </button>
+                      {item.tags.map(tag => (
+                        <button
+                          key={tag}
+                          onClick={() => toggleTag(tag)}
+                          className={`hover:text-blue-500 transition-colors ${selectedTags.includes(tag) ? 'text-blue-500' : ''}`}
+                          title={`Filter by "${tag}"`}
+                        >
+                          #{tag}
+                        </button>
+                      ))}
+                    </div>
                   </TableCell>
-                  <TableCell className="py-4 pr-4 text-sm">{item.author}</TableCell>
-                  <TableCell className="py-4 text-sm text-right tabular-nums">
-                    {item.publishedYear < 0 ? `${-item.publishedYear} BC` : item.publishedYear}
+                  <TableCell className="py-4 pr-4 text-sm align-top pt-4">{item.author}</TableCell>
+                  <TableCell className="py-4 text-sm text-right tabular-nums align-top pt-4">
+                    {item.publishedYear === undefined
+                      ? '—'
+                      : item.publishedYear < 0 ? `${-item.publishedYear} BC` : item.publishedYear}
                   </TableCell>
                 </TableRow>
               ))

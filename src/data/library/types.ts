@@ -4,7 +4,8 @@ export type MediaType = 'book' | 'article' | 'paper' | 'video' | 'podcast';
 export interface Book {
   title: string;
   author: string;
-  publishedYear: number;
+  /** Omit when unknown. Negative numbers are BC. */
+  publishedYear?: number;
   category: string;
   tags: string[];
   link: string;

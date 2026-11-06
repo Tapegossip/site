@@ -3,7 +3,7 @@ import { Mail } from 'lucide-react';
 const linkClass = "text-muted-foreground hover:text-blue-500 transition-colors";
 
 const Footer = () => (
-  <footer className="border-t border-border py-8">
+  <footer className="py-8">
     <div className="max-w-5xl mx-auto px-4 md:px-8">
       <div className="flex justify-center items-center space-x-8">
         <a
