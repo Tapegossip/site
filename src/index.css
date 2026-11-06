@@ -79,6 +79,13 @@
 
   html {
     @apply scroll-smooth;
+    /* Always reserve the scrollbar's space so short and long pages center the same way. */
+    scrollbar-gutter: stable;
+  }
+
+  /* The gutter is already reserved, so dialogs don't need to pad for a scrollbar they hide. */
+  html body[data-scroll-locked] {
+    margin-right: 0 !important;
   }
 }
 
