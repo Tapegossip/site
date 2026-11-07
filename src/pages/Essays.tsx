@@ -7,7 +7,7 @@ const Essays = () => {
   return (
   <div className="page-container">
     <h1 className="page-title">Essays</h1>
-    <div className="space-y-16 animate-appear">
+    <div className="md:space-y-16 animate-appear">
       {essays.map((essay, index) => (
         <EssayCard key={essay.slug} essay={essay} index={index} />
       ))}

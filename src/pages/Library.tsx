@@ -50,6 +50,11 @@ const matchSource: Record<string, string> = {
   site: 'on site', paper: 'in paper', catalog: 'in book subjects',
 };
 
+const yearLabel = (item: LibraryItem) =>
+  item.publishedYear === undefined
+    ? (item.type === 'book' ? '—' : '')
+    : item.publishedYear < 0 ? `${-item.publishedYear} BC` : String(item.publishedYear);
+
 /** "12 videos", or "12 results" for a search across every type. */
 const countLabel = (type: MediaType | null, n: number) => {
   const word = type === null ? 'result' : typeLabel[type].toLowerCase();
@@ -120,16 +125,16 @@ const Library = () => {
     <div className="page-container">
       <h1 className="page-title">Library</h1>
 
-      <div className="mb-4 flex flex-col sm:flex-row gap-4">
+      <div className="mb-4 flex gap-2 sm:gap-4">
         <div className="relative flex-grow">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search everything: title, author, or topic..."
+            placeholder="Search title, author, or topic..."
             aria-label="Search the library"
-            className="w-full pl-10 pr-10 py-2 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring text-sm bg-transparent transition-colors [&::-webkit-search-cancel-button]:hidden"
+            className="w-full h-10 pl-10 pr-10 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring text-sm bg-transparent transition-colors [&::-webkit-search-cancel-button]:hidden"
           />
           {searchQuery && (
             <button
@@ -144,11 +149,11 @@ const Library = () => {
 
         <Sheet>
           <SheetTrigger asChild>
-            <Button className="flex gap-2 items-center" variant="outline">
+            <Button className="flex gap-2 items-center shrink-0 px-3 sm:px-4" variant="outline" aria-label="Filters">
               <Filter className="h-4 w-4" />
-              <span>Filters</span>
+              <span className="hidden sm:inline">Filters</span>
               {activeFilters > 0 && (
-                <Badge variant="secondary" className="ml-1">{activeFilters}</Badge>
+                <Badge variant="secondary" className="sm:ml-1 px-1.5">{activeFilters}</Badge>
               )}
             </Button>
           </SheetTrigger>
@@ -248,7 +253,7 @@ const Library = () => {
 
       <div className="overflow-x-auto pb-4">
         <Table>
-          <TableHeader>
+          <TableHeader className="hidden sm:table-header-group">
             <TableRow>
               <TableHead className="w-[55%]">Title</TableHead>
               <TableHead className="w-[30%]">By</TableHead>
@@ -259,7 +264,7 @@ const Library = () => {
             {paginatedItems.length > 0 ? (
               paginatedItems.map((item) => (
                 <TableRow key={item.id} className="hover:bg-muted/50 transition-colors">
-                  <TableCell className="py-4 pr-4 align-top">
+                  <TableCell className="py-4 px-0 sm:px-4 align-top">
                     {item.type === 'video' ? (
                       <button
                         onClick={() => setPlaying(item)}
@@ -280,6 +285,10 @@ const Library = () => {
                     )}
                     <div className="mt-1 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
                       <span>
+                        {/* Phones: author and year move under the title instead of their own columns. */}
+                        <span className="sm:hidden">
+                          {[item.author, item.publishedYear !== undefined && yearLabel(item)].filter(Boolean).join(' · ')} ·{' '}
+                        </span>
                         {(item.type !== 'book' || activeType === null) && `${typeLabel[item.type]} · `}
                         {item.category}
                       </span>
@@ -302,11 +311,9 @@ const Library = () => {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="py-4 pr-4 text-sm align-top pt-4">{item.author}</TableCell>
-                  <TableCell className="py-4 text-sm text-right tabular-nums align-top pt-4">
-                    {item.publishedYear === undefined
-                      ? (item.type === 'book' ? '—' : '')
-                      : item.publishedYear < 0 ? `${-item.publishedYear} BC` : item.publishedYear}
+                  <TableCell className="hidden sm:table-cell py-4 pr-4 text-sm align-top">{item.author}</TableCell>
+                  <TableCell className="hidden sm:table-cell py-4 text-sm text-right tabular-nums align-top">
+                    {yearLabel(item)}
                   </TableCell>
                 </TableRow>
               ))

@@ -112,7 +112,7 @@
   }
   
   .page-container {
-    @apply w-full max-w-5xl mx-auto px-4 md:px-8 py-16;
+    @apply w-full max-w-5xl mx-auto px-4 md:px-8 pt-12 pb-16 md:py-16;
   }
   
   .page-section {

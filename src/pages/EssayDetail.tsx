@@ -56,17 +56,6 @@ const EssayDetail = () => {
           className="max-w-none"
           dangerouslySetInnerHTML={{ __html: essay.html }}
         />
-        
-        <div className="mt-12 pt-6 border-t border-border flex gap-2 flex-wrap">
-          {essay.tags.map(tag => (
-            <span 
-              key={tag}
-              className="px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
       </article>
     </div>
   );
